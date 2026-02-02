@@ -18,6 +18,8 @@ import AdminLayout from "./pages/admin/AdminLayout";
 import AdminDashboardPage from "./pages/admin/AdminDashboardPage";
 import ComplaintsListPage from "./pages/admin/ComplaintsListPage";
 import ComplaintDetailPage from "./pages/admin/ComplaintDetailPage";
+import StaffManagementPage from "./pages/admin/StaffManagementPage";
+import StaffComplaintsPage from "./pages/admin/StaffComplaintsPage";
 
 const queryClient = new QueryClient();
 
@@ -41,6 +43,8 @@ const App = () => (
                         <Route path="dashboard" element={<AdminDashboardPage />} />
                         <Route path="complaints" element={<ComplaintsListPage />} />
                         <Route path="complaints/:complaintId" element={<ComplaintDetailPage />} />
+                        <Route path="staff" element={<StaffManagementPage />} />
+                        <Route path="staff/:staffId/complaints" element={<StaffComplaintsPage />} />
                     </Route>
 
                     {/* Catch-all */}

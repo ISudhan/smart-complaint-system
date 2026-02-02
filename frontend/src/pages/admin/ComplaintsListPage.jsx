@@ -2,12 +2,13 @@ import { useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import {
   Filter, ChevronLeft, ChevronRight, Eye,
-  UserX, User, AlertTriangle, Shield
+  UserX, User, AlertTriangle, Shield, UserCog
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Badge } from '@/components/ui/badge';
 import { StatusBadge, PriorityBadge } from '@/components/StatusBadge';
 import { complaintService } from '@/services/complaintService';
 
@@ -166,11 +167,12 @@ export default function ComplaintsListPage() {
               <table className="w-full border-collapse">
                 <thead>
                   <tr className="bg-white text-black border-2 border-black">
-                    <th className="w-1/6 text-left px-4 py-4 font-semibold border-r-2 border-black">Complaint ID</th>
+                    <th className="w-1/8 text-left px-4 py-4 font-semibold border-r-2 border-black">Complaint ID</th>
                     <th className="w-1/12 text-left px-4 py-4 font-semibold border-r-2 border-black">Type</th>
                     <th className="w-1/8 text-left px-4 py-4 font-semibold border-r-2 border-black">Category</th>
                     <th className="w-1/12 text-left px-4 py-4 font-semibold border-r-2 border-black">Priority</th>
                     <th className="w-1/12 text-left px-4 py-4 font-semibold border-r-2 border-black">Status</th>
+                    <th className="w-1/8 text-left px-4 py-4 font-semibold border-r-2 border-black">Assigned To</th>
                     <th className="w-1/12 text-left px-4 py-4 font-semibold border-r-2 border-black">Date</th>
                     <th className="w-1/10 text-right px-4 py-4 font-semibold">Actions</th>
                   </tr>
@@ -178,7 +180,7 @@ export default function ComplaintsListPage() {
                 <tbody>
                   {complaints.map((complaint, idx) => (
                     <tr key={complaint.complaintId} className="border-b-2 border-black hover:bg-gray-50 transition-colors bg-white">
-                      <td className="w-1/6 font-mono text-xs px-4 py-4 border-r-2 border-black text-left">
+                      <td className="w-1/8 font-mono text-xs px-4 py-4 border-r-2 border-black text-left">
                         {complaint.complaintId}
                       </td>
                       <td className="w-1/12 px-4 py-4 border-r-2 border-black text-left">
@@ -218,6 +220,20 @@ export default function ComplaintsListPage() {
                       </td>
                       <td className="w-1/12 px-4 py-4 border-r-2 border-black text-left">
                         <StatusBadge status={complaint.status} />
+                      </td>
+                      <td className="w-1/8 px-4 py-4 border-r-2 border-black text-left">
+                        {complaint.assignedTo ? (
+                          <div className="flex items-center gap-1.5">
+                            <UserCog className="h-3.5 w-3.5 text-primary flex-shrink-0" />
+                            <span className="text-xs text-primary font-medium truncate">
+                              {complaint.assignedTo.name || 'Staff'}
+                            </span>
+                          </div>
+                        ) : (
+                          <span className="text-xs text-muted-foreground italic">
+                            Unassigned
+                          </span>
+                        )}
                       </td>
                       <td className="w-1/12 text-xs text-muted-foreground px-4 py-4 border-r-2 border-black text-left">
                         {formatDate(complaint.createdAt)}

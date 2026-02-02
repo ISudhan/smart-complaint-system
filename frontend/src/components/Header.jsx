@@ -1,104 +1,138 @@
-import { Link } from "react-router-dom";
-import { Shield, Menu, X, Home, Search, UserCog } from "lucide-react";
+import { Link, useLocation } from "react-router-dom";
+import { Menu, X, Home, Search, UserCog } from "lucide-react";
 import { useState } from "react";
 
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const location = useLocation();
+
+  const isActive = (path) => location.pathname === path;
 
   return (
-    <header className="institution-header sticky top-0 z-50 backdrop-blur-sm bg-opacity-95">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16 sm:h-20">
-          {/* Logo Section */}
-          <Link 
-            to="/" 
-            className="flex items-center gap-2 sm:gap-3 group transition-transform hover:scale-105"
-          >
-            <div className="relative">
-              {/* <Shield className="h-7 w-7 sm:h-9 sm:w-9 transition-all" /> */}
-              <div className="absolute inset-0 bg-current opacity-0 group-hover:opacity-20 blur-xl transition-opacity" />
-            </div>
-            <div className="flex flex-col">
-              <h1 className="text-base sm:text-lg lg:text-xl font-bold leading-tight tracking-tight">
-                KEC Complaint Portal
-              </h1>
-              <p className="text-[10px] sm:text-xs opacity-75 leading-tight">
-                Confidential Complaint Management
-              </p>
-            </div>
+    <header className="sticky top-0 z-50 backdrop-blur-lg bg-white/5 border-b border-white/10">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="flex h-16 items-center justify-between">
+
+          {/* Brand */}
+          <Link to="/" className="group flex flex-col leading-tight">
+            <span className="text-lg font-semibold tracking-tight group-hover:opacity-90 transition">
+              KEC Complaint Portal
+            </span>
+            <span className="text-xs text-white/60">
+              Secure & Confidential Reporting
+            </span>
           </Link>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center gap-1 lg:gap-2">
-            <Link 
-              to="/" 
-              className="flex items-center gap-1.5 px-3 lg:px-4 py-2 text-sm lg:text-base rounded-lg opacity-90 hover:opacity-100 hover:bg-white/10 transition-all duration-200"
+          {/* Desktop Nav */}
+          <nav className="hidden md:flex items-center gap-1">
+            <Link
+              to="/"
+              className={`nav-link ${isActive("/") && "nav-active"}`}
             >
               <Home className="h-4 w-4" />
               Home
             </Link>
-            <Link 
-              to="/track" 
-              className="flex items-center gap-1.5 px-3 lg:px-4 py-2 text-sm lg:text-base rounded-lg opacity-90 hover:opacity-100 hover:bg-white/10 transition-all duration-200"
+
+            <Link
+              to="/track"
+              className={`nav-link ${isActive("/track") && "nav-active"}`}
             >
               <Search className="h-4 w-4" />
               Track Status
             </Link>
-            <Link 
-              to="/admin/login" 
-              className="flex items-center gap-1.5 ml-2 px-4 lg:px-5 py-2 text-sm lg:text-base rounded-lg bg-white/15 hover:bg-white/25 font-medium transition-all duration-200 border border-white/20"
+
+            <Link
+              to="/admin/login"
+              className="ml-3 inline-flex items-center gap-2 rounded-full bg-white/20 px-5 py-2 text-sm font-medium backdrop-blur hover:bg-white/30 transition"
             >
               <UserCog className="h-4 w-4" />
               Admin Login
             </Link>
           </nav>
 
-          {/* Mobile Menu Button */}
+          {/* Mobile Toggle */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden p-2 rounded-lg hover:bg-white/10 transition-colors"
+            className="md:hidden rounded-lg p-2 hover:bg-white/10 transition"
             aria-label="Toggle menu"
           >
             {mobileMenuOpen ? (
-              <X className="h-6 w-6" />
+              <X className="h-5 w-5" />
             ) : (
-              <Menu className="h-6 w-6" />
+              <Menu className="h-5 w-5" />
             )}
           </button>
         </div>
 
-        {/* Mobile Navigation */}
+        {/* Mobile Menu */}
         {mobileMenuOpen && (
-          <nav className="md:hidden pb-4 animate-in slide-in-from-top-2 duration-200">
-            <div className="flex flex-col gap-1 pt-2 border-t border-white/10">
-              <Link 
-                to="/" 
+          <div className="md:hidden mt-3 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-lg p-3 shadow-lg">
+            <nav className="flex flex-col gap-2">
+              <Link
+                to="/"
                 onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center gap-2 px-4 py-3 text-sm rounded-lg opacity-90 hover:opacity-100 hover:bg-white/10 transition-all"
+                className="mobile-link"
               >
                 <Home className="h-4 w-4" />
                 Home
               </Link>
-              <Link 
-                to="/track" 
+
+              <Link
+                to="/track"
                 onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center gap-2 px-4 py-3 text-sm rounded-lg opacity-90 hover:opacity-100 hover:bg-white/10 transition-all"
+                className="mobile-link"
               >
                 <Search className="h-4 w-4" />
                 Track Status
               </Link>
-              <Link 
-                to="/admin/login" 
+
+              <Link
+                to="/admin/login"
                 onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center justify-center gap-2 mx-2 mt-2 px-4 py-3 text-sm rounded-lg bg-white/15 hover:bg-white/25 font-medium transition-all border border-white/20 text-center"
+                className="mt-1 rounded-xl bg-white/20 px-4 py-2 text-center text-sm font-medium hover:bg-white/30 transition"
               >
-                <UserCog className="h-4 w-4" />
                 Admin Login
               </Link>
-            </div>
-          </nav>
+            </nav>
+          </div>
         )}
       </div>
+
+      {/* Tailwind utility classes */}
+      <style>
+        {`
+          .nav-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+            border-radius: 9999px;
+            opacity: 0.85;
+            transition: all 0.2s ease;
+          }
+          .nav-link:hover {
+            opacity: 1;
+            background: rgba(255,255,255,0.12);
+          }
+          .nav-active {
+            background: rgba(255,255,255,0.18);
+            opacity: 1;
+          }
+          .mobile-link {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.6rem 0.8rem;
+            border-radius: 0.75rem;
+            font-size: 0.875rem;
+            transition: background 0.2s ease;
+          }
+          .mobile-link:hover {
+            background: rgba(255,255,255,0.12);
+          }
+        `}
+      </style>
     </header>
   );
 }

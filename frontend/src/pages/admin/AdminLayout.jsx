@@ -7,6 +7,7 @@ import {
   LogOut,
   Menu,
   X,
+  Users,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { authService } from "@/services/authService";
@@ -48,6 +49,7 @@ export default function AdminLayout() {
   const navItems = [
     { path: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
     { path: "/admin/complaints", label: "Complaints", icon: FileText },
+    { path: "/admin/staff", label: "Staff", icon: Users },
   ];
 
   return (
@@ -81,7 +83,9 @@ export default function AdminLayout() {
               const isActive =
                 location.pathname === item.path ||
                 (item.path === "/admin/complaints" &&
-                  location.pathname.startsWith("/admin/complaints"));
+                  location.pathname.startsWith("/admin/complaints")) ||
+                (item.path === "/admin/staff" &&
+                  location.pathname.startsWith("/admin/staff"));
 
               return (
                 <Link

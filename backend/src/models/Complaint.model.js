@@ -42,6 +42,18 @@ const complaintSchema = new mongoose.Schema(
 
         files: [String],
 
+        assignedTo: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Staff",
+        },
+
+        assignedAt: Date,
+
+        assignedBy: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Admin",
+        },
+
         mlOutput: {
             category: String,
             priority: {

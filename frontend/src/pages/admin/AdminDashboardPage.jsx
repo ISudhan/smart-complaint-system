@@ -13,17 +13,21 @@ import {
   TrendingUp,
   BarChart3,
   Zap,
+  Users,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { complaintService } from "@/services/complaintService";
+import { staffService } from "@/services/staffService";
 
 export default function AdminDashboardPage() {
   const [metrics, setMetrics] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [staffMetrics, setStaffMetrics] = useState({ total: 0, active: 0 });
 
   useEffect(() => {
     loadMetrics();
+    loadStaffMetrics();
   }, []);
 
   const loadMetrics = async () => {
@@ -34,6 +38,20 @@ export default function AdminDashboardPage() {
       console.error("Failed to load metrics:", e);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const loadStaffMetrics = async () => {
+    try {
+      const staff = await staffService.getAllStaff();
+      setStaffMetrics({
+        total: staff.length,
+        active: staff.filter((s) => s.status === "active").length,
+      });
+    } catch (e) {
+      console.error("Failed to load staff metrics:", e);
+      // Set default values on error (e.g., not authenticated)
+      setStaffMetrics({ total: 0, active: 0 });
     }
   };
 
@@ -87,6 +105,14 @@ export default function AdminDashboardPage() {
       icon: UserX,
       iconColor: "text-accent",
       bgColor: "bg-accent/10",
+    },
+    {
+      title: "Staff Members",
+      value: staffMetrics.active,
+      subValue: `${staffMetrics.total} total`,
+      icon: Users,
+      iconColor: "text-info",
+      bgColor: "bg-info/10",
     },
   ];
 
@@ -256,16 +282,16 @@ export default function AdminDashboardPage() {
                       <div className="w-full bg-muted rounded-full h-2">
                         <div
                           className={`h-2 rounded-full transition-all ${idx === 0
-                              ? "bg-primary"
-                              : idx === 1
-                                ? "bg-secondary"
-                                : idx === 2
-                                  ? "bg-accent"
-                                  : "bg-muted-foreground"
+                            ? "bg-primary"
+                            : idx === 1
+                              ? "bg-secondary"
+                              : idx === 2
+                                ? "bg-accent"
+                                : "bg-muted-foreground"
                             }`}
                           style={{
                             width: `${(cat.count /
-                                (topCategories[0]?.count || 1)) *
+                              (topCategories[0]?.count || 1)) *
                               100
                               }%`,
                           }}
@@ -301,12 +327,12 @@ export default function AdminDashboardPage() {
                       <div className="w-full bg-muted rounded-full h-2">
                         <div
                           className={`h-2 rounded-full transition-all ${priority === "critical"
-                              ? "bg-destructive"
-                              : priority === "high"
-                                ? "bg-orange-500"
-                                : priority === "medium"
-                                  ? "bg-yellow-500"
-                                  : "bg-green-500"
+                            ? "bg-destructive"
+                            : priority === "high"
+                              ? "bg-orange-500"
+                              : priority === "medium"
+                                ? "bg-yellow-500"
+                                : "bg-green-500"
                             }`}
                           style={{
                             width: `${Math.max(
@@ -357,6 +383,12 @@ export default function AdminDashboardPage() {
               <Button variant="outline" className="gap-2">
                 <Shield className="h-4 w-4" />
                 Safety ({metrics.safetyRelatedCount})
+              </Button>
+            </Link>
+            <Link to="/admin/staff">
+              <Button variant="outline" className="gap-2">
+                <Users className="h-4 w-4" />
+                Manage Staff ({staffMetrics.total})
               </Button>
             </Link>
           </div>

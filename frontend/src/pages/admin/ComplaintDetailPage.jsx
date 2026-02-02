@@ -14,6 +14,9 @@ import {
   Meh,
   Frown,
   Zap,
+  UserCog,
+  CheckCircle,
+  XCircle as XIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -27,9 +30,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
+import { Badge } from "@/components/ui/badge";
 import { StatusBadge } from "@/components/StatusBadge";
 import { complaintService } from "@/services/complaintService";
 import { authService } from "@/services/authService";
+import { staffService } from "@/services/staffService";
+import { useToast } from "@/hooks/use-toast";
 
 const statusOptions = [
   { value: "submitted", label: "Submitted" },
@@ -41,6 +47,7 @@ const statusOptions = [
 export default function ComplaintDetailPage() {
   const { complaintId } = useParams();
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   const [complaint, setComplaint] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -49,11 +56,21 @@ export default function ComplaintDetailPage() {
   const [remarks, setRemarks] = useState("");
   const [copied, setCopied] = useState(false);
 
+  const [suitableStaff, setSuitableStaff] = useState([]);
+  const [selectedStaff, setSelectedStaff] = useState("");
+  const [isAssigning, setIsAssigning] = useState(false);
+
   useEffect(() => {
     if (complaintId) {
       loadComplaint();
     }
   }, [complaintId]);
+
+  useEffect(() => {
+    if (complaint?.category) {
+      loadSuitableStaff();
+    }
+  }, [complaint?.category]);
 
   const loadComplaint = async () => {
     try {
@@ -62,6 +79,9 @@ export default function ComplaintDetailPage() {
         setComplaint(data);
         setNewStatus(data.status);
         setRemarks(data.adminRemarks || "");
+        if (data.assignedTo) {
+          setSelectedStaff(data.assignedTo._id || data.assignedTo);
+        }
       } else {
         navigate("/admin/complaints");
       }
@@ -69,6 +89,58 @@ export default function ComplaintDetailPage() {
       console.error("Failed to load complaint:", error);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const loadSuitableStaff = async () => {
+    try {
+      const staff = await staffService.getSuitableStaff(complaint.category);
+      setSuitableStaff(staff);
+    } catch (error) {
+      console.error("Failed to load staff:", error);
+    }
+  };
+
+  const handleAssignStaff = async () => {
+    if (!selectedStaff) return;
+
+    setIsAssigning(true);
+    try {
+      await staffService.assignComplaint(complaint._id, selectedStaff);
+      toast({
+        title: "Success",
+        description: "Complaint assigned successfully",
+      });
+      await loadComplaint();
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setIsAssigning(false);
+    }
+  };
+
+  const handleUnassignStaff = async () => {
+    setIsAssigning(true);
+    try {
+      await staffService.unassignComplaint(complaint._id);
+      toast({
+        title: "Success",
+        description: "Complaint unassigned successfully",
+      });
+      setSelectedStaff("");
+      await loadComplaint();
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setIsAssigning(false);
     }
   };
 
@@ -413,6 +485,120 @@ export default function ComplaintDetailPage() {
 
         {/* Sidebar */}
         <div className="space-y-6">
+          {/* Assignment Card */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg flex items-center gap-2">
+                <UserCog className="h-5 w-5" />
+                Staff Assignment
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {complaint.assignedTo ? (
+                <div className="space-y-3">
+                  <div className="p-3 bg-muted rounded-lg">
+                    <div className="flex items-start justify-between mb-2">
+                      <div className="flex items-center gap-2">
+                        <CheckCircle className="h-4 w-4 text-success" />
+                        <span className="text-sm font-medium">Assigned to:</span>
+                      </div>
+                      <Badge variant="secondary">Active</Badge>
+                    </div>
+                    <p className="font-semibold">
+                      {complaint.assignedTo.name || "Unknown Staff"}
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      {complaint.assignedTo.email || ""}
+                    </p>
+                    {complaint.assignedAt && (
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Assigned on {formatDate(complaint.assignedAt)}
+                      </p>
+                    )}
+                  </div>
+                  <Button
+                    onClick={handleUnassignStaff}
+                    disabled={isAssigning}
+                    variant="outline"
+                    className="w-full"
+                    size="sm"
+                  >
+                    {isAssigning ? (
+                      <>
+                        <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                        Unassigning...
+                      </>
+                    ) : (
+                      <>
+                        <XIcon className="h-4 w-4 mr-2" />
+                        Unassign
+                      </>
+                    )}
+                  </Button>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  <div className="p-3 bg-muted/50 rounded-lg border border-dashed">
+                    <p className="text-sm text-muted-foreground text-center">
+                      Not assigned to any staff member
+                    </p>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Assign to Staff</Label>
+                    <p className="text-xs text-muted-foreground">
+                      Showing staff specialized in <span className="font-semibold capitalize">{complaint.category}</span> complaints
+                    </p>
+                    <Select value={selectedStaff} onValueChange={setSelectedStaff}>
+                      <SelectTrigger>
+                        <SelectValue placeholder={
+                          suitableStaff.length === 0
+                            ? "No suitable staff available"
+                            : "Select staff member..."
+                        } />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {suitableStaff.length === 0 ? (
+                          <div className="p-2 text-sm text-muted-foreground text-center">
+                            No staff members specialized in {complaint.category}
+                          </div>
+                        ) : (
+                          suitableStaff.map((staff) => (
+                            <SelectItem key={staff._id} value={staff._id}>
+                              <div className="flex items-center justify-between w-full">
+                                <span>{staff.name}</span>
+                                <span className="text-xs text-muted-foreground ml-2">
+                                  ({staff.activeComplaints || 0} active)
+                                </span>
+                              </div>
+                            </SelectItem>
+                          ))
+                        )}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <Button
+                    onClick={handleAssignStaff}
+                    disabled={!selectedStaff || isAssigning || suitableStaff.length === 0}
+                    className="w-full"
+                    size="sm"
+                  >
+                    {isAssigning ? (
+                      <>
+                        <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                        Assigning...
+                      </>
+                    ) : (
+                      <>
+                        <UserCog className="h-4 w-4 mr-2" />
+                        Assign Staff
+                      </>
+                    )}
+                  </Button>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
           {/* Status Update */}
           <Card>
             <CardHeader>

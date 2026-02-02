@@ -1,8 +1,3 @@
-/**
- * AI Sentiment Analysis Module
- * Analyzes complaints for sentiment, priority, keywords, and flags
- * Uses natural language processing for comprehensive text analysis
- */
 
 // Helper: Check for negation before a word
 function hasNegation(text, wordIndex) {
