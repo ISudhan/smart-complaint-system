@@ -4,7 +4,7 @@ export function Footer() {
       <div className="container mx-auto px-6">
         <div className="flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="text-sm opacity-80">
-            © {new Date().getFullYear()} University Grievance Portal. All rights reserved.
+            © {new Date().getFullYear()} KEC Complaint Portal. All rights reserved.
           </div>
           <div className="flex items-center gap-6 text-sm opacity-80">
             <a href="#" className="hover:opacity-100 hover:underline">Privacy Policy</a>

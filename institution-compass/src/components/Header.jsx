@@ -9,7 +9,7 @@ export function Header() {
           <Shield className="h-8 w-8" />
           <div>
             <h1 className="text-lg font-bold leading-tight">
-              University Grievance Portal
+              KEC Complaint Portal
             </h1>
             <p className="text-xs opacity-80">
               Confidential Complaint Management System
