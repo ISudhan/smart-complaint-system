@@ -21,6 +21,13 @@ import ComplaintDetailPage from "./pages/admin/ComplaintDetailPage";
 import StaffManagementPage from "./pages/admin/StaffManagementPage";
 import StaffComplaintsPage from "./pages/admin/StaffComplaintsPage";
 
+// Staff Pages
+import StaffLoginPage from "./pages/staff/StaffLoginPage";
+import StaffLayout from "./pages/staff/StaffLayout";
+import StaffDashboardPage from "./pages/staff/StaffDashboardPage";
+import StaffComplaintsListPage from "./pages/staff/StaffComplaintsPage";
+import StaffComplaintDetailPage from "./pages/staff/StaffComplaintDetailPage";
+
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -45,6 +52,14 @@ const App = () => (
                         <Route path="complaints/:complaintId" element={<ComplaintDetailPage />} />
                         <Route path="staff" element={<StaffManagementPage />} />
                         <Route path="staff/:staffId/complaints" element={<StaffComplaintsPage />} />
+                    </Route>
+
+                    {/* Staff Routes */}
+                    <Route path="/staff/login" element={<StaffLoginPage />} />
+                    <Route path="/staff" element={<StaffLayout />}>
+                        <Route path="dashboard" element={<StaffDashboardPage />} />
+                        <Route path="complaints" element={<StaffComplaintsListPage />} />
+                        <Route path="complaints/:complaintId" element={<StaffComplaintDetailPage />} />
                     </Route>
 
                     {/* Catch-all */}

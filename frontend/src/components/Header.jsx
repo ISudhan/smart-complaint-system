@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, Home, Search, UserCog } from "lucide-react";
+import { Menu, X, Home, Search, UserCog, Users } from "lucide-react";
 import { useState } from "react";
 
 export function Header() {
@@ -18,7 +18,7 @@ export function Header() {
             <span className="text-lg font-semibold tracking-tight group-hover:opacity-90 transition">
               KEC Complaint Portal
             </span>
-            <span className="text-xs text-white/60">
+            <span className="text-xs text-black">
               Secure & Confidential Reporting
             </span>
           </Link>
@@ -42,8 +42,16 @@ export function Header() {
             </Link>
 
             <Link
+              to="/staff/login"
+              className="ml-3 inline-flex items-center gap-2 rounded-full bg-blue-500/20 px-5 py-2 text-sm font-medium backdrop-blur hover:bg-blue-500/30 transition"
+            >
+              <Users className="h-4 w-4" />
+              Staff Login
+            </Link>
+
+            <Link
               to="/admin/login"
-              className="ml-3 inline-flex items-center gap-2 rounded-full bg-white/20 px-5 py-2 text-sm font-medium backdrop-blur hover:bg-white/30 transition"
+              className="ml-2 inline-flex items-center gap-2 rounded-full bg-white/20 px-5 py-2 text-sm font-medium backdrop-blur hover:bg-white/30 transition"
             >
               <UserCog className="h-4 w-4" />
               Admin Login
@@ -87,10 +95,20 @@ export function Header() {
               </Link>
 
               <Link
+                to="/staff/login"
+                onClick={() => setMobileMenuOpen(false)}
+                className="mt-1 rounded-xl bg-blue-500/20 px-4 py-2 text-center text-sm font-medium hover:bg-blue-500/30 transition flex items-center justify-center gap-2"
+              >
+                <Users className="h-4 w-4" />
+                Staff Login
+              </Link>
+
+              <Link
                 to="/admin/login"
                 onClick={() => setMobileMenuOpen(false)}
-                className="mt-1 rounded-xl bg-white/20 px-4 py-2 text-center text-sm font-medium hover:bg-white/30 transition"
+                className="mt-1 rounded-xl bg-white/20 px-4 py-2 text-center text-sm font-medium hover:bg-white/30 transition flex items-center justify-center gap-2"
               >
+                <UserCog className="h-4 w-4" />
                 Admin Login
               </Link>
             </nav>

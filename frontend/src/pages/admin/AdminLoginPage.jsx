@@ -36,7 +36,7 @@ export default function AdminLoginPage() {
     setError(null);
 
     try {
-      const result = await authService.login(
+      const result = await authService.adminLogin(
         formData.email,
         formData.password
       );
