@@ -18,7 +18,7 @@ export function Header() {
             <span className="text-lg font-semibold tracking-tight group-hover:opacity-90 transition">
               KEC Complaint Portal
             </span>
-            <span className="text-xs text-white/60">
+            <span className="text-xs text-black">
               Secure & Confidential Reporting
             </span>
           </Link>

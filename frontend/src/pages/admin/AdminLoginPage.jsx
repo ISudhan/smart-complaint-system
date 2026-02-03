@@ -90,7 +90,7 @@ export default function AdminLoginPage() {
                       <Input
                         id="email"
                         type="email"
-                        placeholder="admin@university.edu"
+                        placeholder="a****@*****.edu"
                         value={formData.email}
                         onChange={(e) =>
                           setFormData({ ...formData, email: e.target.value })
