@@ -469,7 +469,7 @@ export default function StaffManagementPage() {
                                 />
                             </div>
                             <div className="space-y-2">
-                                <Label htmlFor="edit-password">Password (leave blank to keep current)</Label>
+                                <Label htmlFor="edit-password">Password</Label>
                                 <Input
                                     id="edit-password"
                                     type="password"
